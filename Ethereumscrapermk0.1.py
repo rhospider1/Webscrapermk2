@@ -58,3 +58,5 @@ def eth_price_update(today_date, eth_today):
 t_time =
 eth_price_update(t_time,eth_price)
 
+
+#THIS IS TEST TEXT 
