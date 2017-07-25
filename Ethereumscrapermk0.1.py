@@ -4,7 +4,7 @@
 # Author: Tom Moore
 
 import requests
-import time
+from datetime import date, datetime
 import sys
 import sqlite3
 from pathlib import Path
@@ -26,7 +26,7 @@ eth_sql_db = "/var/eth_sql_dbv2.sqlite"
 eth_price_table = 'eth_prices'	# name of the table to be created
 date_field = 'date_column' # name of the column
 price_field = 'price_column'
-first_col_fieldtype = 'DATETIME'
+first_col_fieldtype = 'TEXT' # column data type
 field_type = 'INTEGER'  # column data type
 
 
@@ -51,11 +51,10 @@ def eth_price_update(today_date, eth_today):
     conn = sqlite3.connect(eth_sql_db)
     c_cursor = conn.cursor()
     # Insert the current ethereum price into the database
-    c_cursor.execute("INSERT INTO {tn} ({fc},{sc}) VALUES ({td}, {tp})".\
-                    format(tn=eth_price_table, fc=date_field, sc=price_field, td=today_date, tp=eth_today))
+    c_cursor.execute("INSERT INTO eth_prices (date_column, price_column) VALUES (?, ?)", (today_date,eth_today))
     conn.commit()
     conn.close()
-t_time =
+t_time = date.today()
 eth_price_update(t_time,eth_price)
 
 
