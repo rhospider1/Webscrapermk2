@@ -70,9 +70,9 @@ def price_movement_func():
     conn = sqlite3.connect(eth_sql_db)
     c_cursor = conn.cursor()
     #select the current row and previous row
-    c_cursor.execute("SELECT * FROM eth_prices ORDER BY ix_column DESC LIMIT 1")
-    database_query = c_cursor.fetchall()
-    print(database_query)
+    c_cursor.execute("SELECT price_column FROM eth_prices ORDER BY ix_column DESC LIMIT 2")
+    current_price = c_cursor.fetchall
+    print(current_price)
 
 price_movement_func()
 
