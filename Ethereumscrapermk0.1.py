@@ -4,7 +4,8 @@
 # Author: Tom Moore
 
 import requests
-from datetime import date, datetime
+import datetime
+import time
 import sys
 import sqlite3
 from pathlib import Path
@@ -54,8 +55,29 @@ def eth_price_update(today_date, eth_today):
     c_cursor.execute("INSERT INTO eth_prices (date_column, price_column) VALUES (?, ?)", (today_date,eth_today))
     conn.commit()
     conn.close()
-t_time = date.today()
+
+# Variables to store current time and the ethereum price
+t_time = datetime.datetime.now()
 eth_price_update(t_time,eth_price)
+
+# check if Ethereum price has moved more than a certain percentage in the last day
+def price_movement_func():
+    # Open the SQL database
+    conn = sqlite3.connect(eth_sql_db)
+    c_cursor = conn.cursor()
+    #select the current row and previous row
+    yesterday_price = c_cursor.execute('SELECT price_column FROM eth_prices WHERE date_column < (?)', (datetime('now'))
+    print(yesterday_price)
+    current_price = print('this should be the current price')
+    print(current_price)
+
+price_movement_func()
+
+
+
+
+
+
 
 
 #THIS IS TEST TEXT 

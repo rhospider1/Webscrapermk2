@@ -1,6 +1,4 @@
 
-from datetime import date, datetime
+import datetime
 
-t_time = str(date.today())
-
-print(t_time)
+print(datetime.datetime.now())
