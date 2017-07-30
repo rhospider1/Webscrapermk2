@@ -6,6 +6,7 @@
 import requests
 import datetime
 import time
+import smtplib
 import sys
 import sqlite3
 from pathlib import Path
@@ -62,7 +63,9 @@ def eth_price_update(today_date, eth_today):
 
 # Variables to store current time and the ethereum price
 t_time = datetime.datetime.now()
-eth_price_update(t_time,eth_price)
+
+# make todays_price a global variable as it is needed in two functions
+todays_price = 0
 
 # check if Ethereum price has moved more than a certain percentage in the last day
 def price_movement_func():
@@ -75,30 +78,55 @@ def price_movement_func():
     # change tuple list into integers through list comprehension (aka Python voodoo)
     current_prices = [i[0] for i in tup_price]
     print(current_prices)
-    # split price list into yesterday's and today's price
-    yesterdays_price = current_prices[0]
-    todays_price = current_prices[1]
-    # Find percentage movement
-    percent_movement = todays_price / yesterdays_price
-    # conduct tests on price movement
-    if percent_movement > 1.000000000000001:
-        print('The price has increased')
-    elif percent_movement < 0.9999999999999:
-        print('The price has decreased')
+    # check if only single datum
+    if len(current_prices) == 1:
+        print('First time running no previous data')
     else:
-        print('No price movement')
+        # split price list into yesterday's and today's price
+        yesterdays_price = current_prices[0]
+        global todays_price
+        todays_price = current_prices[1]
+        # Find percentage movement
+        percent_movement = todays_price / yesterdays_price
+        # conduct tests on price movement
+        if percent_movement > 1.000000000000001:
+            email_increase()
+        elif percent_movement < 0.9999999999999:
+            email_decrease()
+
+# function to send price increase email
+def email_increase():
+    smtpobj = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    smtpobj.ehlo()
+    smtpobj.login('debian694@gmail.com', 'Wardrive332!')
+    smtpobj.sendmail('debian694@gmail.com', 'rhospid@protonmail.com',
+                     'Subject: Ethereum price increase\nThe price of Ethereum has increased by more than 10% in 24 hours')
+    smtpobj.quit()
+
+# function to send price decrease email
+def email_decrease():
+    smtpobj = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    smtpobj.ehlo()
+    smtpobj.login('debian694@gmail.com', 'Wardrive332!')
+    smtpobj.sendmail('debian694@gmail.com', 'rhospid@protonmail.com',
+                     'Subject: Ethereum price decrease\nThe price of Ethereum has decreased by more than 10% 24 hours')
+    smtpobj.quit()
+
+# Final job scheduler
+def schedule_jobs():
+    # checks if price is ready to cash out
+    while todays_price < 30400:
+        #otherwise calls update and analysis functions and then sleeps for 24 hours
+        eth_price_update(t_time,eth_price)
+        price_movement_func()
+        time.sleep(5)
+    else:
+        print('You are a millionare')
+
+# Executes all jobs
+schedule_jobs()
 
 
-price_movement_func()
 
 
 
-
-
-
-
-
-
-
-
-#THIS IS TEST TEXT 
