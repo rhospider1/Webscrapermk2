@@ -93,12 +93,4 @@ price_movement_func()
 
 
 
-
-
-
-
-
-
-
-
-#THIS IS TEST TEXT
+#THIS IS TEST TEXT 2 20:23
