@@ -71,8 +71,23 @@ def price_movement_func():
     c_cursor = conn.cursor()
     #select the current row and previous row
     c_cursor.execute("SELECT price_column FROM eth_prices ORDER BY ix_column DESC LIMIT 2")
-    current_price = c_cursor.fetchall
-    print(current_price)
+    tup_price = c_cursor.fetchall()
+    # change tuple list into integers through list comprehension (aka Python voodoo)
+    current_prices = [i[0] for i in tup_price]
+    print(current_prices)
+    # split price list into yesterday's and today's price
+    yesterdays_price = current_prices[0]
+    todays_price = current_prices[1]
+    # Find percentage movement
+    percent_movement = todays_price / yesterdays_price
+    # conduct tests on price movement
+    if percent_movement > 1.000000000000001:
+        print('The price has increased')
+    elif percent_movement < 0.9999999999999:
+        print('The price has decreased')
+    else:
+        print('No price movement')
+
 
 price_movement_func()
 
