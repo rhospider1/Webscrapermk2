@@ -29,7 +29,8 @@ date_field = 'date_column' # name of the column
 price_field = 'price_column'
 first_col_fieldtype = 'TEXT' # column data type
 field_type = 'INTEGER'  # column data type
-
+index_name = 'eth_uniqix'
+index_column = 'ix_column'
 
 
 # Connecting to the database file
@@ -40,8 +41,11 @@ else:
     conn = sqlite3.connect(eth_sql_db)
     c_cursor = conn.cursor()
     # Creating a new SQLite table with 2 columns
-    c_cursor.execute('CREATE TABLE {tn} ({fc} {ftc}, {sc} {ft})'\
-        .format(tn=eth_price_table, fc=date_field, ftc=first_col_fieldtype, sc=price_field, ft=field_type))
+    c_cursor.execute('CREATE TABLE {tn} ({fc} {ftc}, {sc} {ft}, {cn} INTEGER PRIMARY KEY)'\
+        .format(tn=eth_price_table, fc=date_field, ftc=first_col_fieldtype, sc=price_field, ft=field_type, cn=index_column))
+    # create a unique index
+    c_cursor.execute('CREATE INDEX {ix} on eth_prices ({cn})'\
+                     .format(ix=index_name, cn=index_column))
     # Committing changes and closing the connection to the database file
     conn.commit()
     conn.close()
@@ -66,12 +70,14 @@ def price_movement_func():
     conn = sqlite3.connect(eth_sql_db)
     c_cursor = conn.cursor()
     #select the current row and previous row
-    yesterday_price = c_cursor.execute('SELECT price_column FROM eth_prices WHERE date_column < (?)', (datetime('now'))
-    print(yesterday_price)
-    current_price = print('this should be the current price')
-    print(current_price)
+    c_cursor.execute("SELECT * FROM eth_prices ORDER BY ix_column DESC LIMIT 1")
+    database_query = c_cursor.fetchall()
+    print(database_query)
 
 price_movement_func()
+
+
+
 
 
 
