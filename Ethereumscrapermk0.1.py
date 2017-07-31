@@ -7,11 +7,12 @@ import requests
 import datetime
 import time
 import smtplib
-import sys
 import sqlite3
 from pathlib import Path
 
 eth_price = 0
+
+print('Ethscrapermk1 - An Ethereum webscraper with email alerts.\n Author: Tom Moore')
 
 def update_price():
     # something to look at while running
@@ -95,9 +96,9 @@ def price_movement_func():
         # Find percentage movement
         percent_movement = todays_price / yesterdays_price
         # conduct tests on price movement
-        if percent_movement > 1.000000000000001:
+        if percent_movement > 1.05:
             email_increase()
-        elif percent_movement < 0.9999999999999:
+        elif percent_movement < 0.95:
             email_decrease()
 
 # function to send price increase email
@@ -123,11 +124,11 @@ def schedule_jobs():
     # checks if price is ready to cash out
     while todays_price < 30400:
         update_price()
-        time.sleep(5)
+        time.sleep(8)
         #otherwise calls update and analysis functions and then sleeps for 24 hours
         eth_price_update(t_time,eth_price)
         price_movement_func()
-        time.sleep(10)
+        time.sleep(43200)
     else:
         print('You are a millionare')
 
