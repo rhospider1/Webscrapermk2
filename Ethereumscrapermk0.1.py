@@ -1,4 +1,4 @@
-#! python3
+#! /usr/bin/python3
 
 # An Ethereum webscraper with email alert function
 # Author: Tom Moore
