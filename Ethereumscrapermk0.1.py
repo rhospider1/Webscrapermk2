@@ -11,16 +11,22 @@ import sys
 import sqlite3
 from pathlib import Path
 
-# something to look at while running
-print("Retrieving data from the interwebs...")
-#get the currency price from Coinbase API
-res = requests.get('https://api.coinbase.com/v2/exchange-rates?currency=ETH')
-res.raise_for_status()
-#Convert the json file to a readable format
-resjson = res.json()
-#Go to nested dictionary of currency prices
-currency_dict = resjson['data']['rates']
-eth_price = currency_dict.get("GBP")
+eth_price = 0
+
+def update_price():
+    # something to look at while running
+    print("Retrieving data from the interwebs...")
+    #get the currency price from Coinbase API
+    res = requests.get('https://api.coinbase.com/v2/exchange-rates?currency=ETH')
+    res.raise_for_status()
+    #Convert the json file to a readable format
+    resjson = res.json()
+    #Go to nested dictionary of currency prices
+    currency_dict = resjson['data']['rates']
+    global eth_price
+    eth_price = currency_dict.get("GBP")
+
+update_price()
 
 #Create an SQL lite database
 
@@ -116,10 +122,12 @@ def email_decrease():
 def schedule_jobs():
     # checks if price is ready to cash out
     while todays_price < 30400:
+        update_price()
+        time.sleep(5)
         #otherwise calls update and analysis functions and then sleeps for 24 hours
         eth_price_update(t_time,eth_price)
         price_movement_func()
-        time.sleep(5)
+        time.sleep(10)
     else:
         print('You are a millionare')
 
